@@ -1,0 +1,7 @@
+.chatAreaContainer {
+  flex: 1;
+  height: 100vh;
+  background-color: rgb(227, 240, 227);
+}
+.msgBox {
+}

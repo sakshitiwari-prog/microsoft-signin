@@ -1,0 +1,56 @@
+export const Constants = {
+  navigationScreens: {
+    Main: 'main',
+    Login: 'login',
+    QuoteHistory: 'quoteHistory',
+    Profile: 'profile',
+    Home: 'home',
+    SignUp: 'signUp',
+    SPLASH: 'splash',
+    AuthProvider: 'AuthProvider',
+  },
+  others: {
+    logout: 'logout',
+    success: 'Success',
+    wentWrong: 'Something went wrong',
+    noData: 'NO Data Found',
+    loading: 'Loading....',
+    reset: 'Password Reset Successfully',
+    backToLogin: 'Back To Login',
+    noQuotes: 'No Quotes available',
+
+    error: 'error',
+    errorTitle: 'Error',
+    errorDescription: 'Oops, Something went wrong. Please try again later',
+  },
+  apiKey: {
+    quoteSearchKey: '40YA0xgGFseeQ7tTerZ8NQ==87KDgZb25kWdnlLg',
+  },
+  LoginSingUpScreen: {
+    name: 'Name',
+    email: 'Email Address',
+    password: 'Password',
+    login: 'Login',
+    signUp: 'Sign Up',
+    signUpNow: 'Sign Up',
+    signInNow: 'Sign In',
+    quoteGenerator: 'Quote-Generator',
+    noAccountQuesn: "Don't have an account? ",
+    accountExist: 'Already having an account? ',
+    greetingsMsg: `Welcome,${'\n'}Glad to see you !`,
+  },
+  HomeScreen: {
+    greetings: 'Hi,',
+    exclamationMark: '!',
+    searchQuote: 'Search your quote',
+  },
+  ProfileScreen: {
+    profile: 'Profile',
+    save: 'Save ',
+    email: 'Email',
+    Password: 'Password',
+  },
+  quoteHistoryScreen: {
+    quoteHistory: 'Quote History',
+  },
+};

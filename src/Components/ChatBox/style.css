@@ -1,0 +1,8 @@
+.chatboxContainer {
+  width: 50%;
+  height: 100vh;
+  flex: 1;
+  display: flex;
+  background-color: aliceblue;
+  flex-direction: column;
+}
