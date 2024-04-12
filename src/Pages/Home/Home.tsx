@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Socket } from "socket.io-client";
 import socket from "../../socket";
-import { Button } from "@mui/material";
 import SideBar from "../../Components/SideBar/SideBar";
 import ChatBox from "../../Components/ChatBox/ChatBox";
 import Profile from "../../Components/Profile/Profile";
@@ -61,15 +60,20 @@ export default function Home() {
       socketRef.current.emit("Send_Msg", msgData);
     }
   }
+
   function logoutHandler(val: any) {
     setIsLogout(val);
-    if (socketRef.current?.connected) {
-      socketRef.current.emit("Logout", state);
-    }
+    socketRef?.current?.disconnect();
+    socketRef?.current?.emit("Logout", state);
   }
   useEffect(() => {
     console.log(allMsg, "allMsg", { isConnected }, { socketRef });
-  }, [allMsg]);
+  }, [allMsg, isConnected]);
+  useEffect(() => {
+    console.log("====================================");
+    console.log(onlineUserList, "onlineUserList");
+    console.log("====================================");
+  }, [onlineUserList]);
 
   return (
     <div className="homeContainer">

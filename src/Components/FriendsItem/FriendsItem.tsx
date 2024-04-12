@@ -50,7 +50,7 @@ export default function AlignItemsList(props: any) {
                               variant="body2"
                               color="text.primary"
                             >
-                              Ali Connors
+                              {user.socketId}
                             </Typography>
                             {
                               " — I'll be in your neighborhood doing errands this…"

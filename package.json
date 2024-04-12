@@ -2,7 +2,10 @@
   "name": "chat-app",
   "version": "0.1.0",
   "private": true,
+  "proxy": "http://127.0.0.1:5000",
   "dependencies": {
+    "@azure/msal-browser": "^3.13.0",
+    "@azure/msal-react": "^2.0.15",
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.15.11",

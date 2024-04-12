@@ -47,7 +47,7 @@ function SideBar(props: any) {
     setValue(newValue);
   };
   React.useEffect(() => {
-    // console.log(roomData, "roomData");
+    // console.log(onlineUsers, "onlineUsers");
   });
 
   return (
