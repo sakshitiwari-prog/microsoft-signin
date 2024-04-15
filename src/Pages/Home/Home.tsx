@@ -1,94 +1,134 @@
-import { useEffect, useRef, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { Socket } from "socket.io-client";
-import socket from "../../socket";
-import SideBar from "../../Components/SideBar/SideBar";
-import ChatBox from "../../Components/ChatBox/ChatBox";
-import Profile from "../../Components/Profile/Profile";
+import { useEffect,  useState } from "react";
 import "./style.css";
-export default function Home() {
-  const [isConnected, setIsConnected] = useState(false);
-
-  const [isLogout, setIsLogout] = useState(false);
-  const [roomData, setRoomData] = useState({ room: null, reciever: {} });
-  const [onlineUserList, setOnlineUserList] = useState([]);
-  const [allMsg, setAllMsg] = useState<any>([]);
-  const socketRef: React.MutableRefObject<Socket<any, any> | undefined> =
-    useRef();
-  const user = window.sessionStorage.getItem("user");
-  let parseUser;
-  if (user) parseUser = JSON.parse(user);
-  // Define 'crypto' as a global variable
-
-  const navigate = useNavigate();
-  const { state } = useLocation();
-  useEffect(() => {
-    if (!state) {
-      navigate("/");
+import { Button } from "@mui/material";
+import { graphConfig } from "../../auth-config";
+import { MsalAuthenticationTemplate, useMsal } from "@azure/msal-react";
+import {
+  InteractionRequiredAuthError,
+  InteractionType,
+} from "@azure/msal-browser";
+import { accessRequest } from "../../auth-config";
+async function callMsGraph(msalInstance: any) {
+  let accessToken;
+  try {
+    const account = msalInstance.getActiveAccount();
+    if (!account) {
+      throw Error(
+        "No active account! Verify a user has been signed in and setActiveAccount has been called."
+      );
     }
-    socketRef.current = socket;
-    socket.on("connect", () => setIsConnected(true));
-    socket.off("disconnect", () => setIsConnected(false));
+    const response = await msalInstance.acquireTokenSilent({
+      ...accessRequest,
+      account: account,
+    });
+    accessToken = response.accessToken;
+  } catch (error) {
+    throw error;
+  }
+
+  const headers = new Headers();
+  const bearer = `Bearer ${accessToken}`;
+
+  headers.append("Authorization", bearer);
+
+  const options = {
+    method: "GET",
+    headers: headers,
+  };
+
+  return fetch(graphConfig.graphMeEndpoint, options)
+    .then((response) => response.json())
+    .catch((error) => {
+      throw error;
+    });
+}
+function ProfileContent({ msalContext }: any) {
+  const [graphData, setGraphData] = useState(null);
+
+  const fetchData = async () => {
+    console.log('run');
+    
+    try {
+      const account = msalContext.instance.getActiveAccount(); // Get active account
+      if (!account) {
+        throw Error(
+          "No active account! Verify a user has been signed in and setActiveAccount has been called."
+        );
+      }
+
+      const response = await callMsGraph(msalContext.instance); // Pass MSAL instance to callMsGraph function
+      setGraphData(response);
+    } catch (error) {
+      if (error instanceof InteractionRequiredAuthError) {
+        msalContext.instance
+          .loginPopup({
+            ...accessRequest,
+          })
+          .then(() => {
+            // After successful login, fetch data
+            fetchData();
+          })
+          .catch((error: any) => {
+            console.log(error, "error");
+          });
+      }
+    }
+  };
+  const handleSignOut = () => {
+    msalContext.instance.logout();
+    // Optionally, you can redirect the user to a different page after logout
+    // window.location.href = '/logout';
+  };
+  useEffect(() => {
+    console.log(graphData, "graphData");
+  }, [graphData]);
+  useEffect(() => {
+    fetchData();
   }, []);
-  useEffect(() => {
-    if (isConnected && socketRef) {
-      socketRef?.current?.emit("Add_User", state);
-      socket.on("User_Added", (user) => {
-        setOnlineUserList(user);
-      });
-      console.log(isConnected, socketRef, "isConnected && socketRef");
-      socketRef.current?.on("Reciever_Msg", (msgData: any): any => {
-        console.log(msgData, "---------msgData");
-        setAllMsg((prev: any) => [...prev, msgData]);
-      });
-    }
-
-    // Return a cleanup function
-    // return () => {
-    //   socketRef?.current?.disconnect();
-    // };
-  }, [isConnected]);
-  function handleSendMsg(msg: string) {
-    // console.log(msg, "chatbox");
-    if (socketRef.current?.connected) {
-      let msgData = {
-        msg,
-        reciever: roomData.reciever,
-        sender: state,
-      };
-      setAllMsg((prev: any) => [...prev, msgData]);
-      socketRef.current.emit("Send_Msg", msgData);
-    }
-  }
-
-  function logoutHandler(val: any) {
-    setIsLogout(val);
-    socketRef?.current?.disconnect();
-    socketRef?.current?.emit("Logout", state);
-  }
-  useEffect(() => {
-    console.log(allMsg, "allMsg", { isConnected }, { socketRef });
-  }, [allMsg, isConnected]);
-  useEffect(() => {
-    console.log("====================================");
-    console.log(onlineUserList, "onlineUserList");
-    console.log("====================================");
-  }, [onlineUserList]);
 
   return (
-    <div className="homeContainer">
-      <SideBar
-        roomData={roomData}
-        setRoomData={setRoomData}
-        onlineUsers={onlineUserList}
-        user={parseUser}
-      />
-      <ChatBox
-        allMsg={allMsg}
-        roomData={roomData}
-        handleSendMsg={(msg: string) => handleSendMsg(msg)}
-      ></ChatBox>
-      <Profile handlelogout={(val: any) => logoutHandler(val)}></Profile>
+    <div>
+      <p>hy</p>
+      {graphData && (
+        <>
+          <Button onClick={handleSignOut}>Sign Out</Button>
+          <p>done</p>{" "}
+        </>
+      ) }
     </div>
   );
 }
+
+export default function Home() {
+  const instance :any= useMsal();
+  const [isSignInClicked, setIsSignInClicked] = useState(false);
+
+  const authRequest = {
+    ...accessRequest,
+  };
+
+  const handleSignInClick = () => {
+    setIsSignInClicked(true);
+  };
+
+  return (
+    <div className="homeContainer">
+      {/* Render the Sign In button if isSignInClicked is false */}
+      {!isSignInClicked && (
+        <button onClick={handleSignInClick}>Sign In</button>
+      )}
+ 
+      {/* Render the MsalAuthenticationTemplate only when isSignInClicked is true */}
+      {isSignInClicked && (
+        <MsalAuthenticationTemplate
+          interactionType={InteractionType.Popup}
+          // interactionType={InteractionType.Redirect}
+          authenticationRequest={authRequest}
+        >
+         <ProfileContent msalContext={instance} />
+        </MsalAuthenticationTemplate>
+      )}
+    </div>
+  );
+}
+

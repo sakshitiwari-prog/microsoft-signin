@@ -78,25 +78,25 @@ function ProfileContent({msalContext}:any) {
   
   const [graphData, setGraphData] = useState(null);
 
-  const fetchData = () => {
-    if (!graphData && msalContext.inProgress === InteractionStatus.None) {
-      const token=localStorage.getItem('token')
-      callMsGraph(token)
-        .then((response) => setGraphData(response))
-        .catch((error) => {
-          if (error instanceof InteractionRequiredAuthError) {
-            msalContext.instance.acquireTokenRedirect({
-              ...accessRequest,
-              account: msalContext.instance.getActiveAccount(),
-            });
-          }
-        });
-    }
-  };
+  // const fetchData = () => {
+  //   if (!graphData && msalContext.inProgress === InteractionStatus.None) {
+  //     const token=localStorage.getItem('token')
+  //     callMsGraph(token)
+  //       .then((response) => setGraphData(response))
+  //       .catch((error) => {
+  //         if (error instanceof InteractionRequiredAuthError) {
+  //           msalContext.instance.acquireTokenRedirect({
+  //             ...accessRequest,
+  //             account: msalContext.instance.getActiveAccount(),
+  //           });
+  //         }
+  //       });
+  //   }
+  // };
 
-  useEffect(() => {
-    fetchData();
-  }, [graphData, msalContext]);
+  // useEffect(() => {
+  //   fetchData();
+  // }, [graphData, msalContext]);
 
   return (
     <div>

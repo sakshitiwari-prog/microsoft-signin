@@ -6,9 +6,9 @@ import {
 
 export const msalConfig = {
   auth: {
-    clientId: "09dd92cf-78ba-4c25-94b2-ec3f3ef84352", // This is the ONLY mandatory field that you need to supply.
-    authority: "", // Choose SUSI as your default authority.
-    redirectUri: "/", // You must register this URI on Azure Portal/App Registration. Defaults to window.location.origin
+    clientId: "905b5933-7b18-4274-a196-e398c92ed806", // This is the ONLY mandatory field that you need to supply.
+    authority: "https://login.microsoftonline.com/common", // Choose SUSI as your default authority.
+    redirectUri: window.location.origin, // You must register this URI on Azure Portal/App Registration. Defaults to window.location.origin
     postLogoutRedirectUri: "/", // Indicates the page to navigate after logout.
     navigateToLoginRequestUrl: false, // If "true", will navigate back to the original request location before processing the auth code response.
   },
@@ -24,16 +24,16 @@ export const msalConfig = {
         }
         switch (level) {
           case LogLevel.Error:
-            console.error(message);
+            // console.error(message);
             return;
           case LogLevel.Info:
-            console.info(message);
+            // console.info(message);
             return;
           case LogLevel.Verbose:
-            console.debug(message);
+            // console.debug(message);
             return;
           case LogLevel.Warning:
-            console.warn(message);
+            // console.warn(message);
             return;
           default:
             return;
@@ -48,7 +48,7 @@ export const graphConfig = {
   };
   
 export const accessRequest = {
-  scopes: [,],
+  scopes: ["User.Read"],
 };
 export const msalInstance = new PublicClientApplication(msalConfig);
 

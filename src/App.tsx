@@ -8,13 +8,15 @@ import socket from "./socket";
 import { useEffect } from "react";
 
 function App({instance}:any) {
+  console.log(instance,'instance');
+  
   return (
     <MsalProvider instance={instance}>
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<SignUpSide />} />
+      <Route path="/" element={<Home />} />
+        <Route path="/signup" element={<SignUpSide />} />
         <Route path="/signIn" element={<SignInSide />} />
-        <Route path="/home" element={<Home />} />
       </Routes>
     </BrowserRouter>
     </MsalProvider>
